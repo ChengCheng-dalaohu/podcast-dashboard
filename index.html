@@ -9,17 +9,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0e0c0a;
-      --surface: #1a1714;
-      --surface2: #252119;
-      --border: #3a3428;
-      --accent: #e8a045;
-      --accent-dim: #b07830;
-      --red: #e8453c;
+      --bg: #ffffff;
+      --surface: #f8f8f8;
+      --surface2: #f0f0f0;
+      --border: #e4e4e4;
+      --accent: #C93737;
+      --accent-dim: #a02d2d;
+      --accent-light: rgba(201, 55, 55, 0.1);
+      --red: #C93737;
       --green: #4ecb71;
-      --text: #f0e6d3;
-      --text-dim: #8a7d6b;
-      --text-mid: #c4b49a;
+      --text: #161517;
+      --text-dim: #6b6b6b;
+      --text-mid: #3c3c43;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -28,15 +29,6 @@
       font-family: 'Noto Sans SC', sans-serif;
       min-height: 100vh;
       overflow-x: hidden;
-    }
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 9999;
-      opacity: 0.6;
     }
     .header {
       position: relative;
@@ -49,7 +41,7 @@
       position: absolute;
       top: -60px; right: -60px;
       width: 400px; height: 400px;
-      background: radial-gradient(circle, rgba(232,160,69,0.08) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(201,55,55,0.08) 0%, transparent 70%);
       pointer-events: none;
     }
     .header-eyebrow {
