@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>漫点播客 · 数据看板</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0e0c0a;
+      --surface: #1a1714;
+      --surface2: #252119;
+      --border: #3a3428;
+      --accent: #e8a045;
+      --accent-dim: #b07830;
+      --red: #e8453c;
+      --green: #4ecb71;
+      --text: #f0e6d3;
+      --text-dim: #8a7d6b;
+      --text-mid: #c4b49a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Noto Sans SC', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.6;
+    }
+    .header {
+      position: relative;
+      padding: 60px 48px 40px;
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(232,160,69,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .header-eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards;
+    }
+    .header-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 8px;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.1s ease forwards;
+    }
+    .header-title span { color: var(--accent); }
+    .header-sub {
+      font-size: 13px;
+      color: var(--text-dim);
+      font-weight: 300;
+      letter-spacing: 1px;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.2s ease forwards;
+    }
+    .header-meta {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.3s ease forwards;
+    }
+    .header-tag {
+      font-size: 11px;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+    .header-tag.live {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .platform-nav {
+      display: flex;
+      gap: 0;
+      padding: 0 48px;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+    .platform-tab {
+      padding: 16px 28px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      color: var(--text-dim);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.25s;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .platform-tab:hover { color: var(--text); }
+    .platform-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .platform-tab .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .platform-tab.active .dot { opacity: 1; }
+    .main { padding: 48px; max-width: 1400px; }
+    .platform-section { display: none; }
+    .platform-section.active { display: block; }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: fadeUp 0.5s 0.1s ease forwards;
+    }
+    .metric-card {
+      background: var(--surface);
+      padding: 28px 24px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.2s;
+    }
+    .metric-card:hover { background: var(--surface2); }
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: var(--accent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .metric-card:hover::before { opacity: 1; }
+    .metric-label {
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+    .metric-value {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 40px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+    .metric-unit {
+      font-size: 14px;
+      color: var(--text-mid);
+      margin-left: 4px;
+      letter-spacing: 0;
+      font-weight: 400;
+    }
+    .metric-sub {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 8px;
+      font-weight: 300;
+    }
+    .completion-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 28px;
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: fadeUp 0.5s 0.2s ease forwards;
+    }
+    .completion-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 16px;
+    }
+    .completion-title { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); font-weight: 500; }
+    .completion-value { font-family: 'Noto Serif SC', serif; font-size: 28px; font-weight: 700; color: var(--accent); }
+    .completion-bar-track { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .completion-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-dim), var(--accent));
+      border-radius: 3px;
+      width: 0;
+      transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .episodes-section { opacity: 0; animation: fadeUp 0.5s 0.3s ease forwards; }
+    .episodes-title {
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      font-weight: 500;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .episode-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(58,52,40,0.5);
+      transition: background 0.2s;
+    }
+    .episode-item:last-child { border-bottom: none; }
+    .episode-item:hover { background: rgba(255,255,255,0.02); margin: 0 -4px; padding: 20px 4px; border-radius: 4px; }
+    .episode-num { font-family: 'Noto Serif SC', serif; font-size: 11px; color: var(--text-dim); min-width: 28px; padding-top: 2px; font-weight: 600; }
+    .episode-info { flex: 1; }
+    .episode-title { font-size: 15px; font-weight: 500; color: var(--text); line-height: 1.6; margin-bottom: 6px; }
+    .episode-date { font-size: 12px; color: var(--text-dim); font-weight: 300; }
+    .episode-badge {
+      font-size: 11px;
+      padding: 3px 8px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--text-dim);
+      white-space: nowrap;
+      align-self: center;
+    }
+    .episode-badge.latest { border-color: var(--accent); color: var(--accent); }
+    .compare-section { margin-top: 60px; opacity: 0; animation: fadeUp 0.5s 0.4s ease forwards; }
+    .compare-title {
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      font-weight: 500;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .compare-col { background: var(--surface); padding: 24px; }
+    .compare-platform { font-family: 'Noto Serif SC', serif; font-size: 18px; font-weight: 700; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+    .compare-row { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0; border-bottom: 1px solid rgba(58,52,40,0.4); font-size: 13px; }
+    .compare-row:last-child { border-bottom: none; }
+    .compare-key { color: var(--text-dim); font-weight: 300; }
+    .compare-val { color: var(--text); font-weight: 500; font-family: 'Noto Serif SC', serif; }
+    .summary-bar {
+      margin-top: 40px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 24px 28px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.5s 0.5s ease forwards;
+    }
+    .summary-item { text-align: center; }
+    .summary-num { font-family: 'Noto Serif SC', serif; font-size: 32px; font-weight: 700; color: var(--accent); line-height: 1; }
+    .summary-lbl { font-size: 11px; color: var(--text-dim); letter-spacing: 1px; margin-top: 6px; text-transform: uppercase; font-weight: 500; }
+    .footer {
+      padding: 40px 48px;
+      border-top: 1px solid var(--border);
+      margin-top: 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      opacity: 0;
+      animation: fadeUp 0.5s 0.6s ease forwards;
+    }
+    .footer-text { font-size: 11px; color: var(--text-dim); letter-spacing: 1px; }
+    .footer-logo { font-family: 'Noto Serif SC', serif; font-size: 14px; font-weight: 700; color: var(--border); }
+    .footer-logo span { color: var(--accent-dim); }
+    .new-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 2px;
+      margin-left: 8px;
+      vertical-align: middle;
+      letter-spacing: 1px;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 768px) {
+      .header { padding: 40px 24px 30px; }
+      .main { padding: 32px 24px; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .platform-nav { padding: 0 24px; }
+      .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-eyebrow">播客数据看板 · Podcast Dashboard</div>
+    <h1 class="header-title">漫<span>点</span>播客</h1>
+    <div class="header-sub">漫不经心，点到为止</div>
+    <div class="header-meta">
+      <div class="header-tag">小宇宙</div>
+      <div class="header-tag">喜马拉雅</div>
+      <div class="header-tag">荔枝FM</div>
+      <div class="header-tag">数据更新：2026-04-13</div>
+      <div class="header-tag live">◉ LIVE</div>
+    </div>
+  </div>
+
+  <!-- Platform Nav -->
+  <div class="platform-nav">
+    <div class="platform-tab active" onclick="switchPlatform('xiaoyuzhou', this)">
+      <div class="dot"></div>小宇宙
+    </div>
+    <div class="platform-tab" onclick="switchPlatform('ximalaya', this)">
+      <div class="dot"></div>喜马拉雅
+    </div>
+    <div class="platform-tab" onclick="switchPlatform('lizhi', this)">
+      <div class="dot"></div>荔枝FM
+    </div>
+    <div class="platform-tab" onclick="switchPlatform('overview', this)">
+      <div class="dot"></div>全览对比
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- 小宇宙 -->
+    <div class="platform-section active" id="sec-xiaoyuzhou">
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">总播放量</div>
+          <div class="metric-value">21<span class="metric-unit">次</span></div>
+          <div class="metric-sub">上线 36 天</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">总订阅量</div>
+          <div class="metric-value">6<span class="metric-unit">人</span></div>
+          <div class="metric-sub">稳定积累中</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">总评论量</div>
+          <div class="metric-value">2<span class="metric-unit">条</span></div>
+          <div class="metric-sub">有 2 条最新留言</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">总分享量</div>
+          <div class="metric-value">4<span class="metric-unit">次</span></div>
+          <div class="metric-sub">↗ 较昨日 +1</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">累计完播</div>
+          <div class="metric-value">10.5<span class="metric-unit">次</span></div>
+          <div class="metric-sub">= 播放量 × 完播率</div>
+        </div>
+      </div>
+
+      <div class="completion-section">
+        <div class="completion-header">
+          <div class="completion-title">平均完播率</div>
+          <div class="completion-value">50%</div>
+        </div>
+        <div class="completion-bar-track">
+          <div class="completion-bar" data-width="50"></div>
+        </div>
+      </div>
+
+      <div class="episodes-section">
+        <div class="episodes-title">最新节目 Recent Episodes</div>
+        <div class="episode-item">
+          <div class="episode-num">05</div>
+          <div class="episode-info">
+            <div class="episode-title">漫点｜Vol.05 我身边内个中了五百万的朋友</div>
+            <div class="episode-date">2026.04.13</div>
+          </div>
+          <div class="episode-badge latest">NEW</div>
+        </div>
+        <div class="episode-item">
+          <div class="episode-num">04</div>
+          <div class="episode-info">
+            <div class="episode-title">漫点｜Vol.04 "畸形虐恋"的先锋戏剧？我为什么推荐你去看《恋爱的犀牛》</div>
+            <div class="episode-date">2026.04.12</div>
+          </div>
+        </div>
+        <div class="episode-item">
+          <div class="episode-num">03</div>
+          <div class="episode-info">
+            <div class="episode-title">漫点｜Vol.03 为豆汁儿正名——聊聊关于北京的刻板印象</div>
+            <div class="episode-date">2026.04.08</div>
+          </div>
+        </div>
+        <div class="episode-item">
+          <div class="episode-num">02</div>
+          <div class="episode-info">
+            <div class="episode-title">漫点｜Vol.02 在地狱门口"越狱"有多难？起底阴间最牛"捞人专家"</div>
+            <div class="episode-date">2026.04.05</div>
+          </div>
+        </div>
+        <div class="episode-item">
+          <div class="episode-num">01</div>
+          <div class="episode-info">
+            <div class="episode-title">漫点｜Vol.01 烧纸那点事儿 │清明特辑│</div>
+            <div class="episode-date">2026.04.01</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 喜马拉雅 -->
+    <div class="platform-section" id="sec-ximalaya">
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">播放数</div>
+          <div class="metric-value">64<span class="metric-unit">次</span></div>
+          <div class="metric-sub">上线 12 天</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">粉丝数</div>
+          <div class="metric-value">2<span class="metric-unit">人</span></div>
+          <div class="metric-sub">↗ 较昨日 +1</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">订阅数</div>
+          <div class="metric-value">2<span class="metric-unit">人</span></div>
+          <div class="metric-sub">稳定</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">已发布声音</div>
+          <div class="metric-value">46<span class="metric-unit">个</span></div>
+          <div class="metric-sub">内容储备充足</div>
+        </div>
+      </div>
+
+      <div class="completion-section">
+        <div class="completion-header">
+          <div class="completion-title">喜马拉雅完播率</div>
+          <div class="completion-value">45.31%</div>
+        </div>
+        <div class="completion-bar-track">
+          <div class="completion-bar" data-width="45.31"></div>
+        </div>
+      </div>
+
+      <div class="summary-bar">
+        <div class="summary-item">
+          <div class="summary-num">64</div>
+          <div class="summary-lbl">总播放</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-num">2</div>
+          <div class="summary-lbl">粉丝</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-num">45.3%</div>
+          <div class="summary-lbl">完播率</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-num">¥0</div>
+          <div class="summary-lbl">本月收入</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 荔枝FM -->
+    <div class="platform-section" id="sec-lizhi">
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">总播放量</div>
+          <div class="metric-value">93<span class="metric-unit">次</span></div>
+          <div class="metric-sub">↗ 较昨日 +9</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">总粉丝数</div>
+          <div class="metric-value">1<span class="metric-unit">人</span></div>
+          <div class="metric-sub">待运营激活</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">主播等级</div>
+          <div class="metric-value">LV 0</div>
+          <div class="metric-sub">起步阶段</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">总集数</div>
+          <div class="metric-value">5<span class="metric-unit">集</span></div>
+          <div class="metric-sub">Vol.05 已发布</div>
+        </div>
+      </div>
+
+      <div class="completion-section">
+        <div class="completion-header">
+          <div class="completion-title">单集播放 · Top Episode</div>
+          <div class="completion-value">Vol.01</div>
+        </div>
+        <div class="completion-bar-track">
+          <div class="completion-bar" data-width="61.3"></div>
+        </div>
+      </div>
+
+      <div class="episodes-section">
+        <div class="episodes-title">各集播放量 Episode Plays (荔枝)</div>
+        <div class="episode-item">
+          <div class="episode-num">01</div>
+          <div class="episode-info">
+            <div class="episode-title">烧纸那点事儿 │清明特辑│</div>
+            <div class="episode-date">12天前 · 53分钟</div>
+          </div>
+          <div class="episode-badge latest">57</div>
+        </div>
+        <div class="episode-item">
+          <div class="episode-num">02</div>
+          <div class="episode-info">
+            <div class="episode-title">在地狱门口"越狱"有多难？</div>
+            <div class="episode-date">8天前 · 23分钟</div>
+          </div>
+          <div class="episode-badge">26</div>
+        </div>
+        <div class="episode-item">
+          <div class="episode-num">03</div>
+          <div class="episode-info">
+            <div class="episode-title">为豆汁儿正名——聊聊北京的刻板印象</div>
+            <div class="episode-date">5天前 · 46分钟</div>
+          </div>
+          <div class="episode-badge">10</div>
+        </div>
+        <div class="episode-item">
+          <div class="episode-num">04</div>
+          <div class="episode-info">
+            <div class="episode-title">"畸形虐恋"的先锋戏剧？</div>
+            <div class="episode-date">1天前 · 21分钟</div>
+          </div>
+          <div class="episode-badge">0</div>
+        </div>
+        <div class="episode-item">
+          <div class="episode-num">05</div>
+          <div class="episode-info">
+            <div class="episode-title">我身边内个中了五百万的朋友</div>
+            <div class="episode-date">13小时前 · 35分钟</div>
+          </div>
+          <div class="episode-badge latest">NEW</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 全览对比 -->
+    <div class="platform-section" id="sec-overview">
+      <div class="compare-section">
+        <div class="compare-title">三平台数据对比 Cross-Platform Overview</div>
+        <div class="compare-grid">
+          <div class="compare-col">
+            <div class="compare-platform" style="color: #e8a045">小宇宙</div>
+            <div class="compare-row"><span class="compare-key">播放量</span><span class="compare-val">21</span></div>
+            <div class="compare-row"><span class="compare-key">订阅/粉丝</span><span class="compare-val">6</span></div>
+            <div class="compare-row"><span class="compare-key">完播率</span><span class="compare-val">50%</span></div>
+            <div class="compare-row"><span class="compare-key">评论量</span><span class="compare-val">2</span></div>
+            <div class="compare-row"><span class="compare-key">分享量</span><span class="compare-val">4</span></div>
+            <div class="compare-row"><span class="compare-key">上线天数</span><span class="compare-val">36</span></div>
+          </div>
+          <div class="compare-col">
+            <div class="compare-platform" style="color: #e8453c">喜马拉雅</div>
+            <div class="compare-row"><span class="compare-key">播放数</span><span class="compare-val">64</span></div>
+            <div class="compare-row"><span class="compare-key">粉丝数</span><span class="compare-val">2</span></div>
+            <div class="compare-row"><span class="compare-key">订阅数</span><span class="compare-val">2</span></div>
+            <div class="compare-row"><span class="compare-key">完播率</span><span class="compare-val">45.31%</span></div>
+            <div class="compare-row"><span class="compare-key">声音数</span><span class="compare-val">46</span></div>
+            <div class="compare-row"><span class="compare-key">上线天数</span><span class="compare-val">12</span></div>
+          </div>
+          <div class="compare-col">
+            <div class="compare-platform" style="color: #4ecb71">荔枝FM</div>
+            <div class="compare-row"><span class="compare-key">总播放量</span><span class="compare-val">93</span></div>
+            <div class="compare-row"><span class="compare-key">总粉丝数</span><span class="compare-val">1</span></div>
+            <div class="compare-row"><span class="compare-key">主播等级</span><span class="compare-val">LV 0</span></div>
+            <div class="compare-row"><span class="compare-key">总集数</span><span class="compare-val">5</span></div>
+            <div class="compare-row"><span class="compare-key">单集最高</span><span class="compare-val">57</span></div>
+            <div class="compare-row"><span class="compare-key">上线状态</span><span class="compare-val">运营中</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-bar" style="margin-top: 40px;">
+        <div class="summary-item">
+          <div class="summary-num">178</div>
+          <div class="summary-lbl">全平台播放</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-num">9</div>
+          <div class="summary-lbl">总订阅/粉丝</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-num">47.7%</div>
+          <div class="summary-lbl">平均完播率</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-num">5</div>
+          <div class="summary-lbl">累计集数</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-num">36</div>
+          <div class="summary-lbl">最长运营天数</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-text">漫点播客 · 数据看板 · 实时抓取于 2026-04-13 · Powered by OpenClaw</div>
+    <div class="footer-logo">漫<span>点</span></div>
+  </div>
+
+  <script>
+    function switchPlatform(id, el) {
+      document.querySelectorAll('.platform-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.platform-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('sec-' + id).classList.add('active');
+      el.classList.add('active');
+      setTimeout(triggerBars, 50);
+    }
+
+    function triggerBars() {
+      document.querySelectorAll('.completion-bar').forEach(bar => {
+        bar.style.width = bar.getAttribute('data-width') + '%';
+      });
+    }
+
+    window.addEventListener('load', () => {
+      setTimeout(triggerBars, 800);
+    });
+  </script>
+</body>
+</html>
