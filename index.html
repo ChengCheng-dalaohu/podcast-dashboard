@@ -10,17 +10,19 @@
   <style>
     :root {
       --bg: #ffffff;
-      --surface: #f8f8f8;
+      --surface: #fafafa;
       --surface2: #f0f0f0;
       --border: #e4e4e4;
       --accent: #C93737;
       --accent-dim: #a02d2d;
-      --accent-light: rgba(201, 55, 55, 0.1);
+      --accent-light: rgba(201,55,55,0.08);
       --red: #C93737;
+      --red-bg: #fff0f0;
       --green: #4ecb71;
       --text: #161517;
       --text-dim: #6b6b6b;
       --text-mid: #3c3c43;
+      --tab-bg: #f8f8f8;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -28,62 +30,56 @@
       color: var(--text);
       font-family: 'Noto Sans SC', sans-serif;
       min-height: 100vh;
-      overflow-x: hidden;
     }
     .header {
       position: relative;
-      padding: 60px 48px 40px;
+      padding: 48px 48px 36px;
       border-bottom: 1px solid var(--border);
       overflow: hidden;
     }
     .header::after {
       content: '';
       position: absolute;
-      top: -60px; right: -60px;
-      width: 400px; height: 400px;
-      background: radial-gradient(circle, rgba(201,55,55,0.08) 0%, transparent 70%);
+      top: -40px; right: -40px;
+      width: 360px; height: 360px;
+      background: radial-gradient(circle, rgba(201,55,55,0.07) 0%, transparent 70%);
       pointer-events: none;
     }
     .header-eyebrow {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 500;
       letter-spacing: 4px;
       text-transform: uppercase;
       color: var(--accent);
-      margin-bottom: 12px;
-      opacity: 0;
-      animation: fadeUp 0.6s ease forwards;
+      margin-bottom: 10px;
+      opacity: 0; animation: fadeUp 0.5s ease forwards;
     }
     .header-title {
       font-family: 'Noto Serif SC', serif;
-      font-size: clamp(36px, 5vw, 64px);
+      font-size: clamp(32px, 4.5vw, 56px);
       font-weight: 900;
       letter-spacing: -1px;
       line-height: 1.1;
-      margin-bottom: 8px;
-      opacity: 0;
-      animation: fadeUp 0.6s 0.1s ease forwards;
+      margin-bottom: 6px;
+      opacity: 0; animation: fadeUp 0.5s 0.08s ease forwards;
     }
     .header-title span { color: var(--accent); }
     .header-sub {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text-dim);
       font-weight: 300;
-      letter-spacing: 1px;
-      opacity: 0;
-      animation: fadeUp 0.6s 0.2s ease forwards;
+      opacity: 0; animation: fadeUp 0.5s 0.16s ease forwards;
     }
     .header-meta {
       display: flex;
-      gap: 12px;
-      margin-top: 20px;
+      gap: 8px;
+      margin-top: 16px;
       flex-wrap: wrap;
-      opacity: 0;
-      animation: fadeUp 0.6s 0.3s ease forwards;
+      opacity: 0; animation: fadeUp 0.5s 0.24s ease forwards;
     }
     .header-tag {
-      font-size: 11px;
-      padding: 4px 10px;
+      font-size: 10px;
+      padding: 3px 10px;
       border: 1px solid var(--border);
       border-radius: 2px;
       color: var(--text-dim);
@@ -93,117 +89,150 @@
       border-color: var(--accent);
       color: var(--accent);
     }
+
+    /* Top Nav: Platform */
     .platform-nav {
       display: flex;
       gap: 0;
       padding: 0 48px;
       border-bottom: 1px solid var(--border);
       overflow-x: auto;
+      background: var(--bg);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
     .platform-tab {
-      padding: 16px 28px;
+      padding: 14px 24px;
       font-size: 13px;
       font-weight: 500;
-      letter-spacing: 1px;
       color: var(--text-dim);
       cursor: pointer;
       border-bottom: 2px solid transparent;
-      transition: all 0.25s;
+      transition: all 0.2s;
       white-space: nowrap;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
     }
     .platform-tab:hover { color: var(--text); }
     .platform-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
     .platform-tab .dot {
-      width: 6px; height: 6px;
+      width: 5px; height: 5px;
       border-radius: 50%;
       background: var(--accent);
       opacity: 0;
-      transition: opacity 0.3s;
     }
     .platform-tab.active .dot { opacity: 1; }
-    .main { padding: 48px; max-width: 1400px; }
+
+    .main { padding: 40px 48px 60px; }
     .platform-section { display: none; }
     .platform-section.active { display: block; }
+
+    /* Section title */
+    .section-title {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      font-weight: 500;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .block-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 24px;
+      margin-bottom: 32px;
+      opacity: 0; animation: fadeUp 0.5s ease forwards;
+    }
+    .block-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .block-title .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px; height: 20px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 3px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    /* Metrics grid */
     .metrics-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
       gap: 1px;
       background: var(--border);
       border: 1px solid var(--border);
       border-radius: 4px;
       overflow: hidden;
-      margin-bottom: 40px;
-      opacity: 0;
-      animation: fadeUp 0.5s 0.1s ease forwards;
+      margin-bottom: 24px;
     }
     .metric-card {
       background: var(--surface);
-      padding: 28px 24px;
+      padding: 20px 18px;
       position: relative;
-      overflow: hidden;
       transition: background 0.2s;
     }
-    .metric-card:hover { background: var(--surface2); }
-    .metric-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 3px; height: 100%;
-      background: var(--accent);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    .metric-card:hover::before { opacity: 1; }
+    .metric-card:hover { background: #f0f0f0; }
     .metric-label {
-      font-size: 11px;
+      font-size: 10px;
       letter-spacing: 2px;
       color: var(--text-dim);
       text-transform: uppercase;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       font-weight: 500;
     }
     .metric-value {
       font-family: 'Noto Serif SC', serif;
-      font-size: 40px;
+      font-size: 32px;
       font-weight: 700;
       color: var(--text);
       line-height: 1;
-      letter-spacing: -2px;
+      letter-spacing: -1px;
     }
-    .metric-unit {
-      font-size: 14px;
-      color: var(--text-mid);
-      margin-left: 4px;
-      letter-spacing: 0;
-      font-weight: 400;
+    .metric-unit { font-size: 12px; color: var(--text-mid); margin-left: 3px; }
+    .metric-sub { font-size: 10px; color: var(--text-dim); margin-top: 7px; font-weight: 300; }
+    .metric-card.is-highest .metric-value { color: var(--red); }
+    .metric-card.is-highest { background: var(--red-bg); }
+    .metric-card.is-highest::before {
+      content: '◆ 最高';
+      position: absolute;
+      top: 4px; right: 8px;
+      font-size: 8px;
+      color: var(--red);
+      letter-spacing: 1px;
     }
-    .metric-sub {
-      font-size: 11px;
-      color: var(--text-dim);
-      margin-top: 8px;
-      font-weight: 300;
-    }
+
+    /* Completion bar */
     .completion-section {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 4px;
-      padding: 28px;
-      margin-bottom: 40px;
-      opacity: 0;
-      animation: fadeUp 0.5s 0.2s ease forwards;
+      padding: 20px 24px;
+      margin-bottom: 24px;
     }
     .completion-header {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
-    .completion-title { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); font-weight: 500; }
-    .completion-value { font-family: 'Noto Serif SC', serif; font-size: 28px; font-weight: 700; color: var(--accent); }
-    .completion-bar-track { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .completion-label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); }
+    .completion-value { font-family: 'Noto Serif SC', serif; font-size: 22px; font-weight: 700; color: var(--accent); }
+    .completion-track { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
     .completion-bar {
       height: 100%;
       background: linear-gradient(90deg, var(--accent-dim), var(--accent));
@@ -211,118 +240,191 @@
       width: 0;
       transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .episodes-section { opacity: 0; animation: fadeUp 0.5s 0.3s ease forwards; }
-    .episodes-title {
-      font-size: 13px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      font-weight: 500;
-      margin-bottom: 20px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border);
-    }
-    .episode-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 20px;
-      padding: 20px 0;
-      border-bottom: 1px solid rgba(58,52,40,0.5);
-      transition: background 0.2s;
-    }
-    .episode-item:last-child { border-bottom: none; }
-    .episode-item:hover { background: rgba(255,255,255,0.02); margin: 0 -4px; padding: 20px 4px; border-radius: 4px; }
-    .episode-num { font-family: 'Noto Serif SC', serif; font-size: 11px; color: var(--text-dim); min-width: 28px; padding-top: 2px; font-weight: 600; }
-    .episode-info { flex: 1; }
-    .episode-title { font-size: 15px; font-weight: 500; color: var(--text); line-height: 1.6; margin-bottom: 6px; }
-    .episode-date { font-size: 12px; color: var(--text-dim); font-weight: 300; }
-    .episode-badge {
-      font-size: 11px;
-      padding: 3px 8px;
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      color: var(--text-dim);
-      white-space: nowrap;
-      align-self: center;
-    }
-    .episode-badge.latest { border-color: var(--accent); color: var(--accent); }
-    .compare-section { margin-top: 60px; opacity: 0; animation: fadeUp 0.5s 0.4s ease forwards; }
-    .compare-title {
-      font-size: 13px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      font-weight: 500;
-      margin-bottom: 20px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border);
-    }
-    .compare-grid {
+
+    /* Charts placeholder */
+    .charts-row {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      overflow: hidden;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
     }
-    .compare-col { background: var(--surface); padding: 24px; }
-    .compare-platform { font-family: 'Noto Serif SC', serif; font-size: 18px; font-weight: 700; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
-    .compare-row { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0; border-bottom: 1px solid rgba(58,52,40,0.4); font-size: 13px; }
-    .compare-row:last-child { border-bottom: none; }
-    .compare-key { color: var(--text-dim); font-weight: 300; }
-    .compare-val { color: var(--text); font-weight: 500; font-family: 'Noto Serif SC', serif; }
-    .summary-bar {
-      margin-top: 40px;
+    .chart-box {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 4px;
-      padding: 24px 28px;
+      padding: 20px;
+      text-align: center;
+    }
+    .chart-label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 12px; }
+    .chart-placeholder {
+      height: 100px;
+      background: var(--tab-bg);
+      border-radius: 3px;
       display: flex;
       align-items: center;
-      gap: 32px;
+      justify-content: center;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .chart-note { font-size: 10px; color: var(--text-dim); margin-top: 8px; text-align: left; }
+    .chart-note span { color: var(--accent); }
+
+    /* Album data */
+    .album-list { display: flex; flex-direction: column; gap: 16px; }
+    .album-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 20px;
+    }
+    .album-name {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .album-metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+    }
+    .album-metric { text-align: left; }
+    .album-metric .metric-label { font-size: 10px; margin-bottom: 5px; }
+    .album-metric .metric-value { font-size: 22px; }
+    .album-sub { font-size: 10px; color: var(--text-dim); margin-top: 4px; }
+
+    /* Episode table */
+    .episode-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .episode-table th {
+      text-align: left;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 10px 12px;
+      border-bottom: 2px solid var(--border);
+      font-weight: 500;
+    }
+    .episode-table td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(228,228,228,0.6);
+      vertical-align: top;
+    }
+    .episode-table tr:last-child td { border-bottom: none; }
+    .episode-table tr:hover td { background: rgba(201,55,55,0.03); }
+    .ep-name { font-weight: 500; line-height: 1.5; max-width: 300px; }
+    .ep-date { font-size: 11px; color: var(--text-dim); margin-top: 3px; }
+    .ep-num { font-family: 'Noto Serif SC', serif; font-size: 11px; color: var(--text-dim); }
+    .ep-cell { font-family: 'Noto Serif SC', serif; font-weight: 600; }
+    .ep-cell.is-highest { color: var(--red); }
+    .ep-cell.highest-tag::after {
+      content: ' ◆';
+      font-size: 8px;
+      color: var(--red);
+    }
+    .ep-badge-new { display: inline-block; background: var(--accent); color: #fff; font-size: 8px; padding: 1px 5px; border-radius: 2px; margin-left: 6px; vertical-align: middle; }
+
+    /* Single episode comparison table */
+    .cross-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-bottom: 16px;
+    }
+    .cross-table th {
+      text-align: center;
+      font-size: 10px;
+      letter-spacing: 1px;
+      color: var(--text-dim);
+      padding: 8px 10px;
+      border-bottom: 2px solid var(--border);
+      font-weight: 500;
+    }
+    .cross-table th:first-child { text-align: left; }
+    .cross-table td { padding: 10px 10px; border-bottom: 1px solid rgba(228,228,228,0.5); vertical-align: middle; }
+    .cross-table tr:last-child td { border-bottom: none; }
+    .cross-table tr:hover td { background: rgba(201,55,55,0.02); }
+    .cross-table .ep-name-cell { font-weight: 500; line-height: 1.4; }
+    .cross-table .ep-num-cell { font-family: 'Noto Serif SC', serif; color: var(--text-dim); text-align: center; font-size: 10px; }
+    .cross-table .data-cell { font-family: 'Noto Serif SC', serif; font-weight: 600; text-align: center; }
+    .cross-table .data-cell.winner { color: var(--red); }
+    .cross-table .no-data { color: var(--text-dim); font-size: 10px; }
+    .platform-col-header {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .platform-col-header.xy { color: #e8a045; }
+    .platform-col-header.xm { color: #e8453c; }
+    .platform-col-header.lz { color: #4ecb71; }
+
+    /* Summary bar */
+    .summary-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 20px 28px;
+      display: flex;
+      align-items: center;
+      gap: 40px;
       flex-wrap: wrap;
-      opacity: 0;
-      animation: fadeUp 0.5s 0.5s ease forwards;
     }
     .summary-item { text-align: center; }
-    .summary-num { font-family: 'Noto Serif SC', serif; font-size: 32px; font-weight: 700; color: var(--accent); line-height: 1; }
-    .summary-lbl { font-size: 11px; color: var(--text-dim); letter-spacing: 1px; margin-top: 6px; text-transform: uppercase; font-weight: 500; }
+    .summary-num { font-family: 'Noto Serif SC', serif; font-size: 28px; font-weight: 700; color: var(--accent); line-height: 1; }
+    .summary-lbl { font-size: 10px; color: var(--text-dim); letter-spacing: 1px; margin-top: 5px; text-transform: uppercase; font-weight: 500; }
+
+    /* Cross platform compare */
+    .compare-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+    .compare-col { background: var(--surface); padding: 20px; }
+    .compare-platform { font-family: 'Noto Serif SC', serif; font-size: 16px; font-weight: 700; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .compare-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid rgba(228,228,228,0.4); font-size: 12px; }
+    .compare-row:last-child { border-bottom: none; }
+    .compare-key { color: var(--text-dim); }
+    .compare-val { font-weight: 600; font-family: 'Noto Serif SC', serif; }
+
+    /* Scrape button */
+    .scrape-hint {
+      background: var(--accent-light);
+      border: 1px solid var(--accent);
+      border-radius: 4px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      font-size: 12px;
+      color: var(--accent-dim);
+      line-height: 1.7;
+    }
+    .scrape-hint strong { font-weight: 700; }
+
+    /* Footer */
     .footer {
-      padding: 40px 48px;
+      padding: 32px 48px;
       border-top: 1px solid var(--border);
-      margin-top: 60px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      opacity: 0;
-      animation: fadeUp 0.5s 0.6s ease forwards;
+      opacity: 0; animation: fadeUp 0.5s 0.6s ease forwards;
     }
-    .footer-text { font-size: 11px; color: var(--text-dim); letter-spacing: 1px; }
-    .footer-logo { font-family: 'Noto Serif SC', serif; font-size: 14px; font-weight: 700; color: var(--border); }
+    .footer-text { font-size: 10px; color: var(--text-dim); letter-spacing: 1px; }
+    .footer-logo { font-family: 'Noto Serif SC', serif; font-size: 13px; font-weight: 700; color: var(--border); }
     .footer-logo span { color: var(--accent-dim); }
-    .new-badge {
-      display: inline-block;
-      background: var(--accent);
-      color: var(--bg);
-      font-size: 9px;
-      font-weight: 700;
-      padding: 1px 5px;
-      border-radius: 2px;
-      margin-left: 8px;
-      vertical-align: middle;
-      letter-spacing: 1px;
-    }
+
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
+      from { opacity: 0; transform: translateY(12px); }
       to { opacity: 1; transform: translateY(0); }
     }
     @media (max-width: 768px) {
-      .header { padding: 40px 24px 30px; }
-      .main { padding: 32px 24px; }
-      .compare-grid { grid-template-columns: 1fr; }
+      .header { padding: 36px 24px 28px; }
+      .main { padding: 28px 24px 40px; }
       .platform-nav { padding: 0 24px; }
-      .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+      .compare-grid { grid-template-columns: 1fr; }
+      .charts-row { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -353,6 +455,9 @@
     <div class="platform-tab" onclick="switchPlatform('lizhi', this)">
       <div class="dot"></div>荔枝FM
     </div>
+    <div class="platform-tab" onclick="switchPlatform('episodes', this)">
+      <div class="dot"></div>单集数据
+    </div>
     <div class="platform-tab" onclick="switchPlatform('overview', this)">
       <div class="dot"></div>全览对比
     </div>
@@ -361,226 +466,388 @@
   <!-- Main -->
   <div class="main">
 
-    <!-- 小宇宙 -->
+    <!-- ========== 小宇宙 ========== -->
     <div class="platform-section active" id="sec-xiaoyuzhou">
-      <div class="metrics-grid">
-        <div class="metric-card">
-          <div class="metric-label">总播放量</div>
-          <div class="metric-value">21<span class="metric-unit">次</span></div>
-          <div class="metric-sub">上线 36 天</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">总订阅量</div>
-          <div class="metric-value">6<span class="metric-unit">人</span></div>
-          <div class="metric-sub">稳定积累中</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">总评论量</div>
-          <div class="metric-value">2<span class="metric-unit">条</span></div>
-          <div class="metric-sub">有 2 条最新留言</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">总分享量</div>
-          <div class="metric-value">4<span class="metric-unit">次</span></div>
-          <div class="metric-sub">↗ 较昨日 +1</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">累计完播</div>
-          <div class="metric-value">10.5<span class="metric-unit">次</span></div>
-          <div class="metric-sub">= 播放量 × 完播率</div>
+
+      <div class="block-card" style="animation-delay:0.05s">
+        <div class="block-title"><span class="num">📊</span> 小宇宙 · 核心数据</div>
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-label">总播放量</div>
+            <div class="metric-value">21<span class="metric-unit">次</span></div>
+            <div class="metric-sub">上线 36 天</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">总订阅量</div>
+            <div class="metric-value">6<span class="metric-unit">人</span></div>
+            <div class="metric-sub">稳定积累中</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">总评论量</div>
+            <div class="metric-value">2<span class="metric-unit">条</span></div>
+            <div class="metric-sub">有 2 条最新留言</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">总分享量</div>
+            <div class="metric-value">4<span class="metric-unit">次</span></div>
+            <div class="metric-sub">↗ 较昨日 +1</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">累计完播</div>
+            <div class="metric-value">10.5<span class="metric-unit">次</span></div>
+            <div class="metric-sub">= 播放量 × 完播率</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">平均完播率</div>
+            <div class="metric-value">50<span class="metric-unit">%</span></div>
+            <div class="metric-sub">上线以来平均</div>
+          </div>
         </div>
       </div>
 
-      <div class="completion-section">
-        <div class="completion-header">
-          <div class="completion-title">平均完播率</div>
-          <div class="completion-value">50%</div>
-        </div>
-        <div class="completion-bar-track">
-          <div class="completion-bar" data-width="50"></div>
-        </div>
+      <div class="block-card" style="animation-delay:0.1s">
+        <div class="block-title"><span class="num">🎧</span> 小宇宙 · 单集数据</div>
+        <table class="episode-table">
+          <thead>
+            <tr>
+              <th style="width:50px">#</th>
+              <th>节目名称</th>
+              <th style="width:100px">发布日期</th>
+              <th style="width:80px;text-align:right">播放量</th>
+              <th style="width:80px;text-align:right">完播率</th>
+              <th style="width:80px;text-align:right">评论</th>
+              <th style="width:80px;text-align:right">分享</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="ep-num">05</td>
+              <td class="ep-name">我身边内个中了五百万的朋友<span class="ep-badge-new">NEW</span></td>
+              <td class="ep-date">2026-04-13</td>
+              <td class="ep-cell">0</td>
+              <td class="ep-cell">0%</td>
+              <td class="ep-cell">0</td>
+              <td class="ep-cell">0</td>
+            </tr>
+            <tr>
+              <td class="ep-num">04</td>
+              <td class="ep-name">"畸形虐恋"的先锋戏剧？我为什么推荐你去看《恋爱的犀牛》</td>
+              <td class="ep-date">2026-04-12</td>
+              <td class="ep-cell">0</td>
+              <td class="ep-cell">0%</td>
+              <td class="ep-cell">0</td>
+              <td class="ep-cell">1</td>
+            </tr>
+            <tr>
+              <td class="ep-num">03</td>
+              <td class="ep-name">为豆汁儿正名——聊聊关于北京的刻板印象</td>
+              <td class="ep-date">2026-04-08</td>
+              <td class="ep-cell">5</td>
+              <td class="ep-cell">50%</td>
+              <td class="ep-cell">0</td>
+              <td class="ep-cell">0</td>
+            </tr>
+            <tr>
+              <td class="ep-num">02</td>
+              <td class="ep-name">在地狱门口"越狱"有多难？起底阴间最牛"捞人专家"</td>
+              <td class="ep-date">2026-04-05</td>
+              <td class="ep-cell">4</td>
+              <td class="ep-cell">50%</td>
+              <td class="ep-cell">0</td>
+              <td class="ep-cell">0</td>
+            </tr>
+            <tr>
+              <td class="ep-num">01</td>
+              <td class="ep-name">烧纸内点事儿 │清明特辑│</td>
+              <td class="ep-date">2026-04-01</td>
+              <td class="ep-cell is-highest highest-tag">12</td>
+              <td class="ep-cell">50%</td>
+              <td class="ep-cell is-highest highest-tag">2</td>
+              <td class="ep-cell is-highest highest-tag">3</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-      <div class="episodes-section">
-        <div class="episodes-title">最新节目 Recent Episodes</div>
-        <div class="episode-item">
-          <div class="episode-num">05</div>
-          <div class="episode-info">
-            <div class="episode-title">漫点｜Vol.05 我身边内个中了五百万的朋友</div>
-            <div class="episode-date">2026.04.13</div>
-          </div>
-          <div class="episode-badge latest">NEW</div>
-        </div>
-        <div class="episode-item">
-          <div class="episode-num">04</div>
-          <div class="episode-info">
-            <div class="episode-title">漫点｜Vol.04 "畸形虐恋"的先锋戏剧？我为什么推荐你去看《恋爱的犀牛》</div>
-            <div class="episode-date">2026.04.12</div>
-          </div>
-        </div>
-        <div class="episode-item">
-          <div class="episode-num">03</div>
-          <div class="episode-info">
-            <div class="episode-title">漫点｜Vol.03 为豆汁儿正名——聊聊关于北京的刻板印象</div>
-            <div class="episode-date">2026.04.08</div>
-          </div>
-        </div>
-        <div class="episode-item">
-          <div class="episode-num">02</div>
-          <div class="episode-info">
-            <div class="episode-title">漫点｜Vol.02 在地狱门口"越狱"有多难？起底阴间最牛"捞人专家"</div>
-            <div class="episode-date">2026.04.05</div>
-          </div>
-        </div>
-        <div class="episode-item">
-          <div class="episode-num">01</div>
-          <div class="episode-info">
-            <div class="episode-title">漫点｜Vol.01 烧纸那点事儿 │清明特辑│</div>
-            <div class="episode-date">2026.04.01</div>
-          </div>
-        </div>
-      </div>
     </div>
 
-    <!-- 喜马拉雅 -->
+    <!-- ========== 喜马拉雅 ========== -->
     <div class="platform-section" id="sec-ximalaya">
-      <div class="metrics-grid">
-        <div class="metric-card">
-          <div class="metric-label">播放数</div>
-          <div class="metric-value">64<span class="metric-unit">次</span></div>
-          <div class="metric-sub">上线 12 天</div>
+
+      <div class="block-card">
+        <div class="block-title"><span class="num">1</span> 数据总览</div>
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-label">播放数</div>
+            <div class="metric-value">64<span class="metric-unit">次</span></div>
+            <div class="metric-sub">上线 12 天</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">完播率</div>
+            <div class="metric-value">45.31<span class="metric-unit">%</span></div>
+            <div class="metric-sub">昨日无变化</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">订阅数</div>
+            <div class="metric-value">2<span class="metric-unit">人</span></div>
+            <div class="metric-sub">稳定</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">粉丝数</div>
+            <div class="metric-value">2<span class="metric-unit">人</span></div>
+            <div class="metric-sub">↗ 昨日 +1</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">评论数</div>
+            <div class="metric-value">—</div>
+            <div class="metric-sub">待抓取</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">分享数</div>
+            <div class="metric-value">—</div>
+            <div class="metric-sub">待抓取</div>
+          </div>
         </div>
-        <div class="metric-card">
-          <div class="metric-label">粉丝数</div>
-          <div class="metric-value">2<span class="metric-unit">人</span></div>
-          <div class="metric-sub">↗ 较昨日 +1</div>
+        <div class="charts-row">
+          <div class="chart-box">
+            <div class="chart-label">播放数趋势图</div>
+            <div class="chart-placeholder">📈 待接入数据</div>
+            <div class="chart-note">来源：<span>喜马拉雅创作中心 → 数据中心 → 总体概览 → 播放数图表</span></div>
+          </div>
+          <div class="chart-box">
+            <div class="chart-label">来源分布</div>
+            <div class="chart-placeholder">🥧 待接入数据</div>
+            <div class="chart-note">来源：<span>喜马拉雅创作中心 → 数据中心 → 总体概览 → 来源分布饼图</span></div>
+          </div>
         </div>
-        <div class="metric-card">
-          <div class="metric-label">订阅数</div>
-          <div class="metric-value">2<span class="metric-unit">人</span></div>
-          <div class="metric-sub">稳定</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">已发布声音</div>
-          <div class="metric-value">46<span class="metric-unit">个</span></div>
-          <div class="metric-sub">内容储备充足</div>
+        <div class="chart-box" style="margin-bottom:0">
+          <div class="chart-label">收听时段分布</div>
+          <div class="chart-placeholder">⏰ 待接入数据</div>
+          <div class="chart-note">来源：<span>喜马拉雅创作中心 → 数据中心 → 总体概览 → 收听时段图表</span></div>
         </div>
       </div>
 
-      <div class="completion-section">
-        <div class="completion-header">
-          <div class="completion-title">喜马拉雅完播率</div>
-          <div class="completion-value">45.31%</div>
+      <div class="block-card">
+        <div class="block-title"><span class="num">2</span> 专辑数据</div>
+        <div class="scrape-hint">
+          <strong>📌 数据来源：</strong>喜马拉雅创作中心 → 数据中心 → 专辑数据<br>
+          需分别查看三个专辑的核心数据：<strong>曝光数、点击数、播放数、完播率、次日留存率、七日留存率、订阅数、分享数</strong>，以及曝光7日趋势图和流量转化图。
         </div>
-        <div class="completion-bar-track">
-          <div class="completion-bar" data-width="45.31"></div>
+        <div class="album-list">
+          <div class="album-card">
+            <div class="album-name">漫点｜文艺课代表</div>
+            <div class="album-metrics">
+              <div class="album-metric"><div class="metric-label">曝光数</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+              <div class="album-metric"><div class="metric-label">点击数</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+              <div class="album-metric"><div class="metric-label">播放数</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+              <div class="album-metric"><div class="metric-label">完播率</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+              <div class="album-metric"><div class="metric-label">次日留存</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+              <div class="album-metric"><div class="metric-label">7日留存</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+              <div class="album-metric"><div class="metric-label">订阅数</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+              <div class="album-metric"><div class="metric-label">分享数</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+            </div>
+          </div>
+          <div class="album-card">
+            <div class="album-name">漫点｜扯点闲篇儿</div>
+            <div class="album-metrics">
+              <div class="album-metric"><div class="metric-label">曝光数</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+              <div class="album-metric"><div class="metric-label">点击数</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+              <div class="album-metric"><div class="metric-label">播放数</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+              <div class="album-metric"><div class="metric-label">完播率</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+              <div class="album-metric"><div class="metric-label">次日留存</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+              <div class="album-metric"><div class="metric-label">7日留存</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+              <div class="album-metric"><div class="metric-label">订阅数</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+              <div class="album-metric"><div class="metric-label">分享数</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+            </div>
+          </div>
+          <div class="album-card">
+            <div class="album-name">漫点｜聊点悬的乎的</div>
+            <div class="album-metrics">
+              <div class="album-metric"><div class="metric-label">曝光数</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+              <div class="album-metric"><div class="metric-label">点击数</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+              <div class="album-metric"><div class="metric-label">播放数</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+              <div class="album-metric"><div class="metric-label">完播率</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+              <div class="album-metric"><div class="metric-label">次日留存</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+              <div class="album-metric"><div class="metric-label">7日留存</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+              <div class="album-metric"><div class="metric-label">订阅数</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+              <div class="album-metric"><div class="metric-label">分享数</div><div class="metric-value">—</div><div class="album-sub">待抓取</div></div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="summary-bar">
-        <div class="summary-item">
-          <div class="summary-num">64</div>
-          <div class="summary-lbl">总播放</div>
+      <div class="block-card">
+        <div class="block-title"><span class="num">3</span> 声音数据</div>
+        <div class="scrape-hint">
+          <strong>📌 数据来源：</strong>喜马拉雅创作中心 → 数据中心 → 声音数据<br>
+          复刻声音数据页面，每条显示：<strong>节目名称、发布时间、播放数、评论数、完播率</strong>。
         </div>
-        <div class="summary-item">
-          <div class="summary-num">2</div>
-          <div class="summary-lbl">粉丝</div>
-        </div>
-        <div class="summary-item">
-          <div class="summary-num">45.3%</div>
-          <div class="summary-lbl">完播率</div>
-        </div>
-        <div class="summary-item">
-          <div class="summary-num">¥0</div>
-          <div class="summary-lbl">本月收入</div>
-        </div>
+        <div class="chart-placeholder" style="height:120px">🎙️ 待接入声音数据列表</div>
       </div>
+
     </div>
 
-    <!-- 荔枝FM -->
+    <!-- ========== 荔枝FM ========== -->
     <div class="platform-section" id="sec-lizhi">
-      <div class="metrics-grid">
-        <div class="metric-card">
-          <div class="metric-label">总播放量</div>
-          <div class="metric-value">93<span class="metric-unit">次</span></div>
-          <div class="metric-sub">↗ 较昨日 +9</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">总粉丝数</div>
-          <div class="metric-value">1<span class="metric-unit">人</span></div>
-          <div class="metric-sub">待运营激活</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">主播等级</div>
-          <div class="metric-value">LV 0</div>
-          <div class="metric-sub">起步阶段</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">总集数</div>
-          <div class="metric-value">5<span class="metric-unit">集</span></div>
-          <div class="metric-sub">Vol.05 已发布</div>
+
+      <div class="block-card">
+        <div class="block-title"><span class="num">📊</span> 荔枝FM · 核心数据</div>
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-label">总播放量</div>
+            <div class="metric-value is-highest">93<span class="metric-unit">次</span></div>
+            <div class="metric-sub">↗ 较昨日 +9</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">总粉丝数</div>
+            <div class="metric-value">1<span class="metric-unit">人</span></div>
+            <div class="metric-sub">待运营激活</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">主播等级</div>
+            <div class="metric-value">LV 0</div>
+            <div class="metric-sub">起步阶段</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">总集数</div>
+            <div class="metric-value">5<span class="metric-unit">集</span></div>
+            <div class="metric-sub">Vol.05 已发布</div>
+          </div>
         </div>
       </div>
 
-      <div class="completion-section">
-        <div class="completion-header">
-          <div class="completion-title">单集播放 · Top Episode</div>
-          <div class="completion-value">Vol.01</div>
+      <div class="block-card">
+        <div class="block-title"><span class="num">📈</span> 数据趋势</div>
+        <div class="scrape-hint">
+          <strong>📌 数据来源：</strong>荔枝创作者服务平台（nj.lizhi.fm）→ 数据 → 数据统计 → 新增播放 + 声音播放数趋势图
         </div>
-        <div class="completion-bar-track">
-          <div class="completion-bar" data-width="61.3"></div>
+        <div class="chart-box" style="margin-bottom:0">
+          <div class="chart-label">声音播放数趋势</div>
+          <div class="chart-placeholder" style="height:120px">📈 待接入趋势图</div>
+          <div class="chart-note">来源：<span>荔枝创作者服务平台 → 数据 → 数据统计 → 新增播放 → 趋势图</span></div>
         </div>
       </div>
 
-      <div class="episodes-section">
-        <div class="episodes-title">各集播放量 Episode Plays (荔枝)</div>
-        <div class="episode-item">
-          <div class="episode-num">01</div>
-          <div class="episode-info">
-            <div class="episode-title">烧纸那点事儿 │清明特辑│</div>
-            <div class="episode-date">12天前 · 53分钟</div>
-          </div>
-          <div class="episode-badge latest">57</div>
-        </div>
-        <div class="episode-item">
-          <div class="episode-num">02</div>
-          <div class="episode-info">
-            <div class="episode-title">在地狱门口"越狱"有多难？</div>
-            <div class="episode-date">8天前 · 23分钟</div>
-          </div>
-          <div class="episode-badge">26</div>
-        </div>
-        <div class="episode-item">
-          <div class="episode-num">03</div>
-          <div class="episode-info">
-            <div class="episode-title">为豆汁儿正名——聊聊北京的刻板印象</div>
-            <div class="episode-date">5天前 · 46分钟</div>
-          </div>
-          <div class="episode-badge">10</div>
-        </div>
-        <div class="episode-item">
-          <div class="episode-num">04</div>
-          <div class="episode-info">
-            <div class="episode-title">"畸形虐恋"的先锋戏剧？</div>
-            <div class="episode-date">1天前 · 21分钟</div>
-          </div>
-          <div class="episode-badge">0</div>
-        </div>
-        <div class="episode-item">
-          <div class="episode-num">05</div>
-          <div class="episode-info">
-            <div class="episode-title">我身边内个中了五百万的朋友</div>
-            <div class="episode-date">13小时前 · 35分钟</div>
-          </div>
-          <div class="episode-badge latest">NEW</div>
-        </div>
+      <div class="block-card">
+        <div class="block-title"><span class="num">🎧</span> 各集播放（荔枝）</div>
+        <table class="episode-table">
+          <thead>
+            <tr>
+              <th style="width:50px">#</th>
+              <th>节目名称</th>
+              <th style="width:100px">时长</th>
+              <th style="width:80px;text-align:right">播放量</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="ep-num">01</td>
+              <td class="ep-name">烧纸那点事儿 │清明特辑│</td>
+              <td class="ep-date">53分钟</td>
+              <td class="ep-cell is-highest highest-tag">57</td>
+            </tr>
+            <tr>
+              <td class="ep-num">02</td>
+              <td class="ep-name">在地狱门口"越狱"有多难？</td>
+              <td class="ep-date">23分钟</td>
+              <td class="ep-cell">26</td>
+            </tr>
+            <tr>
+              <td class="ep-num">03</td>
+              <td class="ep-name">为豆汁儿正名——聊聊北京的刻板印象</td>
+              <td class="ep-date">46分钟</td>
+              <td class="ep-cell">10</td>
+            </tr>
+            <tr>
+              <td class="ep-num">04</td>
+              <td class="ep-name">"畸形虐恋"的先锋戏剧？</td>
+              <td class="ep-date">21分钟</td>
+              <td class="ep-cell">0</td>
+            </tr>
+            <tr>
+              <td class="ep-num">05</td>
+              <td class="ep-name">我身边内个中了五百万的朋友<span class="ep-badge-new">NEW</span></td>
+              <td class="ep-date">35分钟</td>
+              <td class="ep-cell">0</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
+
     </div>
 
-    <!-- 全览对比 -->
+    <!-- ========== 单集数据 ========== -->
+    <div class="platform-section" id="sec-episodes">
+
+      <div class="block-card">
+        <div class="block-title"><span class="num">🔍</span> 单集数据 · 三平台对比</div>
+        <div class="scrape-hint">
+          <strong>说明：</strong>同名节目标点符号差异视为同一期。单平台最高数据已标红◆。<br>
+          <strong>小宇宙</strong>来源：数据分析 → 单集数据　
+          <strong>喜马拉雅</strong>来源：数据中心 → 声音数据　
+          <strong>荔枝</strong>来源：内容管理 → 声音管理（无完播率）
+        </div>
+        <table class="cross-table">
+          <thead>
+            <tr>
+              <th style="width:40px">#</th>
+              <th>节目名称</th>
+              <th class="platform-col-header xy">小宇宙<br><span style="font-weight:400;font-size:9px">播放/评论/完播</span></th>
+              <th class="platform-col-header xm">喜马拉雅<br><span style="font-weight:400;font-size:9px">播放/评论/完播</span></th>
+              <th class="platform-col-header lz">荔枝FM<br><span style="font-weight:400;font-size:9px">播放/评论</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="ep-num-cell">05</td>
+              <td class="ep-name-cell">我身边内个中了五百万的朋友<span class="ep-badge-new">NEW</span></td>
+              <td class="data-cell">0 / 0 / 0%</td>
+              <td class="data-cell">— / — / —</td>
+              <td class="data-cell">0 / —</td>
+            </tr>
+            <tr>
+              <td class="ep-num-cell">04</td>
+              <td class="ep-name-cell">"畸形虐恋"的先锋戏剧？</td>
+              <td class="data-cell">0 / 0 / 0%</td>
+              <td class="data-cell">— / — / —</td>
+              <td class="data-cell">0 / —</td>
+            </tr>
+            <tr>
+              <td class="ep-num-cell">03</td>
+              <td class="ep-name-cell">为豆汁儿正名——聊聊北京的刻板印象</td>
+              <td class="data-cell">5 / 0 / 50%</td>
+              <td class="data-cell">— / — / —</td>
+              <td class="data-cell winner">10 / —</td>
+            </tr>
+            <tr>
+              <td class="ep-num-cell">02</td>
+              <td class="ep-name-cell">在地狱门口"越狱"有多难？起底阴间最牛"捞人专家"</td>
+              <td class="data-cell">4 / 0 / 50%</td>
+              <td class="data-cell">— / — / —</td>
+              <td class="data-cell">26 / —</td>
+            </tr>
+            <tr>
+              <td class="ep-num-cell">01</td>
+              <td class="ep-name-cell">烧纸那点事儿 │清明特辑│</td>
+              <td class="data-cell winner">12 / 2 / 50%</td>
+              <td class="data-cell">— / — / —</td>
+              <td class="data-cell winner">57 / —</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="chart-note" style="margin-top:8px">
+          ⚠️ 喜马拉雅和荔枝单集数据待抓取后可完整显示。
+          "—" = 暂无数据，"—" 无完播率标注 = 荔枝平台不提供此项。
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========== 全览对比 ========== -->
     <div class="platform-section" id="sec-overview">
-      <div class="compare-section">
-        <div class="compare-title">三平台数据对比 Cross-Platform Overview</div>
+
+      <div class="block-card">
+        <div class="block-title"><span class="num">📊</span> 三平台数据对比</div>
         <div class="compare-grid">
           <div class="compare-col">
             <div class="compare-platform" style="color: #e8a045">小宇宙</div>
@@ -597,22 +864,22 @@
             <div class="compare-row"><span class="compare-key">粉丝数</span><span class="compare-val">2</span></div>
             <div class="compare-row"><span class="compare-key">订阅数</span><span class="compare-val">2</span></div>
             <div class="compare-row"><span class="compare-key">完播率</span><span class="compare-val">45.31%</span></div>
-            <div class="compare-row"><span class="compare-key">声音数</span><span class="compare-val">46</span></div>
-            <div class="compare-row"><span class="compare-key">上线天数</span><span class="compare-val">12</span></div>
+            <div class="compare-row"><span class="compare-key">评论数</span><span class="compare-val">—</span></div>
+            <div class="compare-row"><span class="compare-key">分享数</span><span class="compare-val">—</span></div>
           </div>
           <div class="compare-col">
             <div class="compare-platform" style="color: #4ecb71">荔枝FM</div>
-            <div class="compare-row"><span class="compare-key">总播放量</span><span class="compare-val">93</span></div>
+            <div class="compare-row"><span class="compare-key">总播放量</span><span class="compare-val is-highest">93</span></div>
             <div class="compare-row"><span class="compare-key">总粉丝数</span><span class="compare-val">1</span></div>
             <div class="compare-row"><span class="compare-key">主播等级</span><span class="compare-val">LV 0</span></div>
-            <div class="compare-row"><span class="compare-key">总集数</span><span class="compare-val">5</span></div>
             <div class="compare-row"><span class="compare-key">单集最高</span><span class="compare-val">57</span></div>
+            <div class="compare-row"><span class="compare-key">总集数</span><span class="compare-val">5</span></div>
             <div class="compare-row"><span class="compare-key">上线状态</span><span class="compare-val">运营中</span></div>
           </div>
         </div>
       </div>
 
-      <div class="summary-bar" style="margin-top: 40px;">
+      <div class="summary-bar">
         <div class="summary-item">
           <div class="summary-num">178</div>
           <div class="summary-lbl">全平台播放</div>
@@ -634,6 +901,7 @@
           <div class="summary-lbl">最长运营天数</div>
         </div>
       </div>
+
     </div>
 
   </div>
@@ -655,10 +923,14 @@
 
     function triggerBars() {
       document.querySelectorAll('.completion-bar').forEach(bar => {
-        bar.style.width = bar.getAttribute('data-width') + '%';
+        const w = bar.getAttribute('data-width');
+        if (w && parseFloat(w) > 0) {
+          bar.style.width = w + '%';
+        }
       });
     }
 
+    // Animate completion bars on load
     window.addEventListener('load', () => {
       setTimeout(triggerBars, 800);
     });
